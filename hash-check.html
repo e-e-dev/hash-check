@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>哈希值校验工具 · 在线计算</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f5f7fe 0%, #e6ecf7 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+            padding: 1.5rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+            border-radius: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 15, 45, 0.15), 0 8px 24px rgba(0, 10, 30, 0.1);
+            padding: 2rem 2rem 2.2rem;
+            width: 100%;
+            max-width: 880px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: all 0.2s;
+        }
+
+        h1 {
+            font-size: 1.9rem;
+            font-weight: 600;
+            color: #0a1e3c;
+            margin-bottom: 0.35rem;
+            letter-spacing: -0.01em;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        h1 span {
+            background: #0a1e3c;
+            color: white;
+            font-size: 1.6rem;
+            border-radius: 14px;
+            padding: 0.2rem 0.6rem;
+            line-height: 1.3;
+        }
+
+        .subhead {
+            color: #4f5f7a;
+            font-size: 0.95rem;
+            margin-bottom: 1.8rem;
+            border-left: 3px solid #2e6cf6;
+            padding-left: 1rem;
+            font-weight: 400;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.8rem;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            background: #ffffffd9;
+            border: 1px solid #cdd9f0;
+            padding: 0.65rem 1.4rem;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            color: #1f3a6b;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+        }
+
+        .tab.active {
+            background: #1f3a6b;
+            border-color: #1f3a6b;
+            color: white;
+            box-shadow: 0 6px 14px rgba(31, 58, 107, 0.3);
+        }
+
+        .tab:hover {
+            background: #e0e9ff;
+            border-color: #8da6e0;
+        }
+
+        .tab.active:hover {
+            background: #152b4e;
+            border-color: #152b4e;
+        }
+
+        .input-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .label {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #1f3a6b;
+            letter-spacing: 0.02em;
+            margin-bottom: 0.25rem;
+        }
+
+        .label span.optional {
+            font-weight: 400;
+            font-size: 0.8rem;
+            color: #6e7f9c;
+        }
+
+        textarea {
+            width: 100%;
+            border: 1.5px solid #d9e2f0;
+            border-radius: 18px;
+            padding: 1rem 1.2rem;
+            font-size: 0.95rem;
+            font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+            background: #ffffff;
+            resize: vertical;
+            min-height: 120px;
+            outline: none;
+            transition: border 0.2s, box-shadow 0.2s;
+            color: #121f3a;
+            line-height: 1.5;
+        }
+
+        textarea:focus {
+            border-color: #2e6cf6;
+            box-shadow: 0 0 0 4px rgba(46, 108, 246, 0.15);
+        }
+
+        .file-area {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .file-input-label {
+            background: #edf2fc;
+            border: 1.5px dashed #b7c9e8;
+            border-radius: 40px;
+            padding: 0.7rem 1.6rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #1f3a6b;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+
+        .file-input-label:hover {
+            background: #dce6fa;
+            border-color: #2e6cf6;
+        }
+
+        .file-name {
+            font-size: 0.9rem;
+            color: #4a5c7c;
+            background: #ffffffb3;
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            border: 1px solid #cdd9f0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 280px;
+            white-space: nowrap;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.9rem;
+            margin: 1.5rem 0 1.2rem;
+            align-items: center;
+        }
+
+        .btn {
+            border: none;
+            background: #1f3a6b;
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 0.85rem 2rem;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            box-shadow: 0 8px 18px rgba(31, 58, 107, 0.25);
+            letter-spacing: 0.01em;
+            flex: 0 0 auto;
+        }
+
+        .btn:hover:not(:disabled) {
+            background: #152b4e;
+            transform: scale(1.01);
+            box-shadow: 0 10px 22px rgba(31, 58, 107, 0.35);
+        }
+
+        .btn:disabled {
+            background: #a7b7d4;
+            box-shadow: none;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: #1f3a6b;
+            border: 1.5px solid #b7c9e8;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #f0f5ff;
+            border-color: #2e6cf6;
+            color: #0a1e3c;
+            box-shadow: 0 8px 16px rgba(46, 108, 246, 0.1);
+        }
+
+        .btn-copy {
+            background: #ffffff;
+            color: #1f3a6b;
+            border: 1.5px solid #b7c9e8;
+            padding: 0.85rem 1.6rem;
+            box-shadow: none;
+            flex: 0 1 auto;
+        }
+
+        .btn-copy:hover:not(:disabled) {
+            background: #f0f5ff;
+            border-color: #2e6cf6;
+        }
+
+        .result-box {
+            background: #f8fbff;
+            border-radius: 22px;
+            padding: 1.4rem 1.6rem;
+            border: 1.5px solid #e2ebf9;
+            margin-top: 0.8rem;
+        }
+
+        .hash-label {
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #4a5c7c;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .hash-value {
+            font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+            font-size: 1.05rem;
+            word-break: break-all;
+            background: #ffffff;
+            padding: 1rem 1.2rem;
+            border-radius: 16px;
+            border: 1px solid #d0def0;
+            color: #0a1e3c;
+            line-height: 1.6;
+            letter-spacing: 0.2px;
+            min-height: 4.5rem;
+            transition: background 0.2s;
+            user-select: all;
+        }
+
+        .hash-value.empty {
+            color: #8f9fb8;
+            font-style: italic;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            user-select: none;
+        }
+
+        .alert {
+            font-size: 0.85rem;
+            color: #b3402c;
+            background: #ffefed;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            display: inline-block;
+            border: 1px solid #ffcdc4;
+        }
+
+        .flex-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .hidden-input {
+            display: none;
+        }
+
+        .footer-note {
+            margin-top: 1.8rem;
+            font-size: 0.8rem;
+            color: #7b8ba7;
+            text-align: center;
+            border-top: 1px solid #d9e2f0;
+            padding-top: 1.2rem;
+        }
+
+        .icon {
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>
+        <span>#</span> 哈希值校验工具
+    </h1>
+    <div class="subhead">计算文本或文件的哈希值，支持 SHA-256 / SHA-1 / MD5</div>
+
+    <!-- 算法选择 -->
+    <div class="tabs" id="algorithmTabs">
+        <div class="tab active" data-algo="SHA-256">SHA-256</div>
+        <div class="tab" data-algo="SHA-1">SHA-1</div>
+        <div class="tab" data-algo="MD5">MD5</div>
+    </div>
+
+    <!-- 输入区域 -->
+    <div class="input-section">
+        <div>
+            <div class="label">
+                <span>📄 文本输入</span>
+                <span class="optional">(直接输入要计算哈希的文本)</span>
+            </div>
+            <textarea id="textInput" placeholder="例如：hello world 或 任意文字……"></textarea>
+        </div>
+
+        <div>
+            <div class="label">
+                <span>📁 文件输入</span>
+                <span class="optional">(选择文件后自动填充，优先使用文件)</span>
+            </div>
+            <div class="file-area">
+                <label for="fileInput" class="file-input-label">
+                    <span class="icon">📎</span> 选择文件
+                </label>
+                <input type="file" id="fileInput" class="hidden-input">
+                <span id="fileNameDisplay" class="file-name">未选择任何文件</span>
+                <button class="btn btn-secondary" id="clearFileBtn" style="padding:0.5rem 1.2rem; font-size:0.85rem;" title="清除文件">✕ 清除</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 操作按钮 -->
+    <div class="actions">
+        <button class="btn" id="calculateBtn">
+            <span class="icon">⚡</span> 计算哈希
+        </button>
+        <button class="btn btn-copy" id="copyBtn" disabled>
+            <span class="icon">📋</span> 复制结果
+        </button>
+        <button class="btn btn-secondary" id="clearAllBtn" style="margin-left:auto;">
+            <span class="icon">🧹</span> 清空全部
+        </button>
+    </div>
+
+    <!-- 结果显示 -->
+    <div class="result-box">
+        <div class="hash-label">
+            <span>🔑 哈希值 (<span id="algoDisplay">SHA-256</span>)</span>
+            <span id="statusBadge" style="font-weight:400; text-transform:none; color:#4f5f7a;"></span>
+        </div>
+        <div id="hashOutput" class="hash-value empty">
+            等待计算……
+        </div>
+    </div>
+
+    <div class="footer-note">
+        ⚡ 所有计算均在浏览器本地完成，不会上传任何数据
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ---------- DOM 元素 ----------
+        const tabs = document.querySelectorAll('.tab');
+        const textInput = document.getElementById('textInput');
+        const fileInput = document.getElementById('fileInput');
+        const fileNameDisplay = document.getElementById('fileNameDisplay');
+        const clearFileBtn = document.getElementById('clearFileBtn');
+        const calculateBtn = document.getElementById('calculateBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const clearAllBtn = document.getElementById('clearAllBtn');
+        const hashOutput = document.getElementById('hashOutput');
+        const algoDisplay = document.getElementById('algoDisplay');
+        const statusBadge = document.getElementById('statusBadge');
+
+        // ---------- 状态 ----------
+        let currentAlgorithm = 'SHA-256';   // 当前算法
+        let currentHash = '';              // 当前哈希值(用于复制)
+        let selectedFile = null;           // 当前选中的文件
+        let isCalculating = false;
+
+        // ---------- 更新算法显示 ----------
+        function updateAlgorithmDisplay() {
+            algoDisplay.textContent = currentAlgorithm;
+        }
+
+        // ---------- 切换算法 ----------
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentAlgorithm = tab.dataset.algo;
+                updateAlgorithmDisplay();
+
+                // 如果已经有哈希结果，重新计算（自动刷新）
+                if (currentHash && !isCalculating) {
+                    // 如果输出不是等待状态，则重新计算
+                    if (!hashOutput.classList.contains('empty')) {
+                        performCalculation(false); // 静默重算，不改变界面反馈
+                    }
+                }
+            });
+        });
+
+        // ---------- 文件选择处理 ----------
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                selectedFile = file;
+                fileNameDisplay.textContent = file.name;
+                // 清空文本输入框，突出文件优先（但保留文本内容不影响，实际计算时文件优先）
+                // 仅仅为了界面清晰，不清空文本，但让用户知道文件优先
+                statusBadge.textContent = '文件已选择';
+            } else {
+                // 如果用户取消选择
+                if (!fileInput.files.length) {
+                    selectedFile = null;
+                    fileNameDisplay.textContent = '未选择任何文件';
+                    statusBadge.textContent = '';
+                }
+            }
+            // 清除当前哈希结果（因为输入源变了）
+            resetHashOutput();
+        });
+
+        // 清除文件
+        clearFileBtn.addEventListener('click', () => {
+            fileInput.value = ''; // 清空文件输入
+            selectedFile = null;
+            fileNameDisplay.textContent = '未选择任何文件';
+            statusBadge.textContent = '';
+            resetHashOutput();
+        });
+
+        // 重置哈希输出区域
+        function resetHashOutput() {
+            currentHash = '';
+            hashOutput.textContent = '等待计算……';
+            hashOutput.classList.add('empty');
+            copyBtn.disabled = true;
+            statusBadge.textContent = '';
+        }
+
+        // 清空全部
+        clearAllBtn.addEventListener('click', () => {
+            textInput.value = '';
+            fileInput.value = '';
+            selectedFile = null;
+            fileNameDisplay.textContent = '未选择任何文件';
+            resetHashOutput();
+            statusBadge.textContent = '';
+            // 算法保留不变
+        });
+
+        // ---------- 计算核心 ----------
+        async function performCalculation(showFeedback = true) {
+            if (isCalculating) return;
+
+            // 判断输入源优先级: 文件 > 文本
+            const useFile = (selectedFile !== null);
+
+            let dataSource;
+            let sourceName = '';
+
+            if (useFile) {
+                dataSource = selectedFile;
+                sourceName = `文件: ${selectedFile.name}`;
+            } else {
+                const text = textInput.value;
+                if (!text.trim()) {
+                    if (showFeedback) {
+                        hashOutput.textContent = '⚠️ 请输入文本或选择文件';
+                        hashOutput.classList.add('empty');
+                        statusBadge.textContent = '';
+                    }
+                    copyBtn.disabled = true;
+                    currentHash = '';
+                    return;
+                }
+                dataSource = text;
+                sourceName = '文本内容';
+            }
+
+            isCalculating = true;
+            calculateBtn.disabled = true;
+            if (showFeedback) {
+                hashOutput.textContent = '⏳ 计算中……';
+                hashOutput.classList.remove('empty');
+            }
+            statusBadge.textContent = '正在计算…';
+
+            try {
+                let hashHex = '';
+
+                if (currentAlgorithm === 'MD5') {
+                    // 使用 SparkMD5 处理（如果文件较大，流式处理更好，但为了简单使用arrayBuffer）
+                    if (useFile) {
+                        const arrayBuffer = await readFileAsArrayBuffer(selectedFile);
+                        // 对于大文件，最好使用增量，但简单场景直接计算
+                        // 注意：SparkMD5 的 ArrayBuffer 版本
+                        const spark = new SparkMD5.ArrayBuffer();
+                        spark.append(arrayBuffer);
+                        hashHex = spark.end();
+                    } else {
+                        hashHex = SparkMD5.hash(dataSource);
+                    }
+                } else {
+                    // SHA-1 或 SHA-256 使用 Web Crypto API (仅支持文本，文件需读取为 ArrayBuffer)
+                    let dataBuffer;
+                    if (useFile) {
+                        dataBuffer = await readFileAsArrayBuffer(selectedFile);
+                    } else {
+                        // 文本转 ArrayBuffer
+                        const encoder = new TextEncoder();
+                        dataBuffer = encoder.encode(dataSource).buffer; // 注意：encode 返回 Uint8Array，需要 .buffer
+                        // 但 encode 结果可能是 SharedArrayBuffer? 不需要，直接用 buffer
+                    }
+
+                    // 兼容处理: 如果 TextEncoder 返回的 buffer 是 ArrayBuffer
+                    const hashBuffer = await crypto.subtle.digest(
+                        currentAlgorithm === 'SHA-1' ? 'SHA-1' : 'SHA-256',
+                        dataBuffer
+                    );
+                    hashHex = bufferToHex(hashBuffer);
+                }
+
+                // 更新结果
+                currentHash = hashHex;
+                hashOutput.textContent = hashHex;
+                hashOutput.classList.remove('empty');
+                copyBtn.disabled = false;
+                if (showFeedback) {
+                    statusBadge.textContent = `✅ 完成 (${sourceName})`;
+                } else {
+                    statusBadge.textContent = `已更新 (${currentAlgorithm})`;
+                }
+
+            } catch (error) {
+                console.error(error);
+                hashOutput.textContent = '❌ 计算出错: ' + (error.message || '未知错误');
+                hashOutput.classList.add('empty');
+                copyBtn.disabled = true;
+                currentHash = '';
+                statusBadge.textContent = '计算失败';
+            } finally {
+                isCalculating = false;
+                calculateBtn.disabled = false;
+            }
+        }
+
+        // 读取文件为 ArrayBuffer (返回 Promise)
+        function readFileAsArrayBuffer(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.onerror = (e) => reject(new Error('文件读取失败'));
+                reader.readAsArrayBuffer(file);
+            });
+        }
+
+        // ArrayBuffer 转 十六进制字符串
+        function bufferToHex(buffer) {
+            const byteArray = new Uint8Array(buffer);
+            let hex = '';
+            for (let i = 0; i < byteArray.length; i++) {
+                hex += byteArray[i].toString(16).padStart(2, '0');
+            }
+            return hex;
+        }
+
+        // ---------- 计算按钮点击 ----------
+        calculateBtn.addEventListener('click', () => {
+            performCalculation(true);
+        });
+
+        // ---------- 复制结果 ----------
+        copyBtn.addEventListener('click', async () => {
+            if (!currentHash) return;
+            try {
+                await navigator.clipboard.writeText(currentHash);
+                // 提示复制成功
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<span class="icon">✅</span> 已复制';
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                }, 1500);
+            } catch (err) {
+                // 降级方案
+                const textArea = document.createElement('textarea');
+                textArea.value = currentHash;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                copyBtn.innerHTML = '<span class="icon">✅</span> 已复制';
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                }, 1500);
+            }
+        });
+
+        // ---------- 事件监听：文本输入变化时，重置哈希结果? 并不重置，但提示可能需要重新计算 ----------
+        textInput.addEventListener('input', () => {
+            // 如果当前有文件，提示文件优先
+            if (selectedFile) {
+                statusBadge.textContent = '文件优先，文本将被忽略';
+            } else {
+                // 如果内容变了，且之前有哈希结果，建议重新计算
+                if (currentHash && !isCalculating) {
+                    statusBadge.textContent = '输入已改变，点击计算';
+                }
+            }
+            // 不自动计算，保留用户手动
+        });
+
+        // ---------- 初始化 ----------
+        function init() {
+            updateAlgorithmDisplay();
+            resetHashOutput();
+            statusBadge.textContent = '';
+            // 文本变化或文件变化时不清除全部，但已重置输出
+        }
+
+        // 引入MD5库 (SparkMD5) 动态加载，保证可用性
+        function loadMD5Library() {
+            return new Promise((resolve, reject) => {
+                if (window.SparkMD5) {
+                    resolve();
+                    return;
+                }
+                const script = document.createElement('script');
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/spark-md5/3.0.2/spark-md5.min.js';
+                script.onload = () => resolve();
+                script.onerror = () => reject(new Error('MD5库加载失败'));
+                document.head.appendChild(script);
+            });
+        }
+
+        // 页面加载时预加载MD5
+        loadMD5Library().catch(err => {
+            console.warn('MD5库加载失败，MD5算法将不可用', err);
+            // 如果加载失败，在MD5标签点击时给提示
+            document.querySelectorAll('.tab[data-algo="MD5"]').forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    if (!window.SparkMD5) {
+                        alert('MD5库尚未加载成功，请检查网络或刷新重试');
+                    }
+                });
+            });
+        });
+
+        // 补丁：确保MD5计算时库可用
+        const originalPerformCalculation = performCalculation;
+        performCalculation = async function(showFeedback) {
+            if (currentAlgorithm === 'MD5' && !window.SparkMD5) {
+                try {
+                    await loadMD5Library();
+                } catch (e) {
+                    if (showFeedback) {
+                        hashOutput.textContent = '⚠️ MD5库加载失败，请刷新页面或使用其他算法';
+                        hashOutput.classList.add('empty');
+                        statusBadge.textContent = 'MD5不可用';
+                    }
+                    return;
+                }
+            }
+            return originalPerformCalculation.call(this, showFeedback);
+        };
+
+        init();
+    })();
+</script>
+</body>
+</html>
